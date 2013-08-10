@@ -40,4 +40,8 @@ while not reg do
 			shell.run("red/glass/usrs")
 		end
 	end
+<<<<<<< HEAD
 end
+=======
+end
+>>>>>>> c71bfe6f003d6fcb0469b4ea652133836e90a834
