@@ -1,0 +1,43 @@
+local TGB
+for _,side in pairs(redstone.getSides()) do
+  if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
+        TGB = peripheral.wrap(side)
+		break
+  end
+end
+if TGB==nil then
+  print("Can't find Glasses Bridge!")
+end
+TGB.clear()
+local border = TGB.addBox(5,3,200,2,gray,1)
+local border = TGB.addBox(5,83,200,2,gray,1)
+local border = TGB.addBox(3,3,2,82,gray,1)
+local border = TGB.addBox(203,3,2,82,gray,1)
+local object1 = TGB.addBox(5, 5, 198, 78, lightGray, 0.85)
+local header = TGB.addText(9, 9, "Registration of your nickname", aqua)
+header.setZIndex(1)
+header.setScale(1.28)
+local cmd1 = TGB.addText(9, 30, "$$password or $$back", black)
+cmd1.setZIndex(1)
+while not reg do
+	local e, msg, nick = os.pullEvent()
+	if e == "chat_command" then
+		if fs.exists("red/glass/usr/"..nick) and msg ~= "back" then
+			local cmd2 = TGB.addText(9, 38, "User already exists!", red)
+			cmd2.setZIndex(1)
+			os.sleep(1.45)
+			shell.run("red/glass/register")
+		elseif msg == "back" then
+			shell.run("red/glass/usrs")
+		else
+			file = io.open("red/glass/usr/"..nick, "w")
+			file : write(msg)
+			file : close()
+			os.sleep(0.2)
+			local cmd2 = TGB.addText(9, 38, "Succesfully registered!", black)
+			cmd2.setZIndex(1)
+			os.sleep(1.45)
+			shell.run("red/glass/usrs")
+		end
+	end
+end
