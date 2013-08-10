@@ -33,8 +33,4 @@ while not usrs do
 			error.setZIndex(1)
 		end
 	end
-<<<<<<< HEAD
 end
-=======
-end
->>>>>>> c71bfe6f003d6fcb0469b4ea652133836e90a834
