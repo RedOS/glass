@@ -17,36 +17,38 @@ local border = TGB.addBox(3,3,2,82,gray,1)
 local border = TGB.addBox(203,3,2,82,gray,1)
 local object1 = TGB.addBox(5, 5, 198, 78, lightGray, 0.85)
 local header = TGB.addText(9, 9, "Login", aqua)
-local name = TGB.addText(9, 30, "Name - $$name", black)
+local name = TGB.addText(9, 30, "", black)
+local password = TGB.addText(9, 38, "Password - $$password", black)
+local ret = TGB.addText(9, 65, "$$back for return", black)
 name.setZIndex(1)
+ret.setZIndex(1)
+password.setZIndex(1)
 header.setZIndex(1)
 header.setScale(2)
 while not login do
-local e, msg = os.pullEvent()
+local e, msg, name = os.pullEvent()
 if e == "chat_command" then
-lname = msg
-if fs.exists("red/glass/usr/"..lname) then
-local password = TGB.addText(9, 48, "Password - $$password", black)
-password.setZIndex(1)
-local f, msg1 = os.pullEvent()
-if f == "chat_command" then
-lpass = msg1
-end
-file = io.open("red/glass/usr/"..lname)
-cpass = file : read()
-file : close()
-if cpass == lpass then
-login = true
-shell.run("red/glass/loggedin")
-else
-local message = TGB.addText(9, 39, "Wrong password!", red)
-os.sleep(1)
-shell.run("red/glass/login")
-end
-else
-local message = TGB.addText(9, 39, "User not found!", red)
-os.sleep(1)
-shell.run("red/glass/login")
-end
+	if msg == "back" then
+		shell.run("red/glass/usrs")
+	else
+		if fs.exists("red/glass/usr/"..name) then
+			lpass = msg
+			file = io.open("red/glass/usr/"..name)
+			cpass = file : read()
+			file : close()
+			if cpass == lpass then
+				login = true
+				shell.run("red/glass/loggedin")
+			else
+				local message = TGB.addText(9, 48, "Wrong password!", red)
+				os.sleep(1)
+				shell.run("red/glass/login")
+			end
+		else
+			local message = TGB.addText(9, 48, "User not found, please register", red)
+			os.sleep(1)
+			shell.run("red/glass/login")
+		end
+	end
 end
 end
