@@ -1,0 +1,48 @@
+local TGB
+for _,side in pairs(redstone.getSides()) do
+  if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
+        TGB = peripheral.wrap(side)
+		break
+  end
+end
+if TGB==nil then
+  print("Can't find Glasses Bridge!")
+end
+TGB.clear()
+function update()
+TGB.clear()
+cTime = textutils.formatTime(os.time(), false)
+local object1 = TGB.addBox(5, 5, 132, 42, lightGray, 0.65)
+local border = TGB.addBox(5,3,132,2,gray,1)
+local border = TGB.addBox(5,47,134,2,gray,1)
+local border = TGB.addBox(3,3,2,46,gray,1)
+local border = TGB.addBox(137,3,2,46,gray,1)
+local header = TGB.addText(9, 9, cTime, aqua)
+local cmd1 = TGB.addText(9, 36, "Back - $$back", black)
+header.setZIndex(1)
+cmd1.setZIndex(1)
+cmd1.setScale(1)
+header.setScale(3)
+end
+update()
+repeat
+time = false
+while not time do
+  os.startTimer(0.20)
+  event, msg = os.pullEvent()
+  if event == "timer" then 
+    update()
+  elseif event == "chat_command" and msg == "back" or msg == "home" then
+    time = true
+    shell.run("red/glass/loggedin")
+    break
+  elseif event == "chat_command" and msg ~= "back" or msg ~= "home" then
+  TGB.clear()
+  local cmd1 = TGB.addText(9, 9, "Command not found!", red)
+    cmd1.setZIndex(1)
+    cmd1.setScale(1.25)
+	os.sleep(1.5)
+	update()
+	end
+end
+until i ~= nill
