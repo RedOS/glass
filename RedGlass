@@ -1,436 +1,135 @@
---Creating dir
-shell.run("mkdir", "red")
-shell.run("mkdir", "red/glass")
-shell.run("mkdir", "red/glass/usr")
---Asking Login data
-print("Choose your login name, please")
-name = read()
-print("Choose you password, please")
-pass = read()
-nam = io.open("red/glass/usr/"..name, "w")
-nam:write(pass)
-nam:close()
---Startup
-startupFile = io.open("red/glass/startup", "w")
-startupFile : write([[
-local TGB
-for _,side in pairs(redstone.getSides()) do
+local version = "1.2.1"
+local tColors={["tColors["gray"]"]=0x555555,["tColors["aqua"]"]=0x55FFFF,["tColors["white"]"]=0xFFFFFF,["tColors["red"]"]=0xFF5555,}
+local x = 11
+local y = 0
+local b = ""
+local c = "Connecting..."
+local d = "No update found"
+local glass
+for _,side in pairs(tColors["red"]stone.getSides()) do
   if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
-        TGB = peripheral.wrap(side)
-		break
+        glass = peripheral.wrap(side)
+        break
   end
 end
-if TGB==nil then
-  print("Can't find Glasses Bridge!")
+if glass==nil then
+  print("Terminal Glasses bridge not found!")
+else
+if http then
+local uVerF = http.get("https://dl.dropboxusercontent.com/u/52196276/GlassVersion")
+if uVerF then
+local uVer = uVerF.readAll()
+uVerF.close()
+if tostring(uVer) ~= version then
+local response = http.get("https://dl.dropboxusercontent.com/u/52196276/Update")
+if response then
+local sResponse = response.readAll()
+response.close()
+local file = fs.open("startup", "w")
+file.write(sResponse)
+file.close()
+local uText = glass.addText(9, 9, "Updating...", tColors["aqua"])
+uText.setZIndex(1)
+uText.setScale(2)
+os.sleep(2.5)
+shell.run("startup")
 end
-gray = 0x555555
-lightGray = 0xAAAAAA
-red = 0xFF5555
-black = 0x000000
-cyan = 0x00AAAA
-aqua = 0x55FFFF
-white = 0xFFFFFF
-TGB.clear()
-os.sleep(.4)
-local logo1 = TGB.addBox(9, 9, 40, 40, red, 0.85)
-os.sleep(.4)
-local logo2 = TGB.addBox(49, 9, 40, 40, gray, 0.85)
-os.sleep(.4)
-local logo3 = TGB.addBox(89, 9, 40, 40, white, 0.85)
-os.sleep(.4)
-local logo4 = TGB.addBox(129, 9, 40, 40, lightGray, 0.85)
-os.sleep(.4)
-local logo5 = TGB.addBox(169, 9, 40, 40, cyan, 0.85)
-os.sleep(.7)
-TGB.clear()
-local object1 = TGB.addBox(5, 5, 198, 78, lightGray, 0.65)
-local border = TGB.addBox(5,3,200,2,gray,1)
-local border = TGB.addBox(5,83,200,2,gray,1)
-local border = TGB.addBox(3,3,2,82,gray,1)
-local border = TGB.addBox(203,3,2,82,gray,1)
-local subheader = TGB.addText(9, 42, "Glasses version", aqua)
-local header = TGB.addText(9, 9, "Red OS", gray)
-local version = TGB.addText(9, 57, "Version 1.0.1", aqua)
-local poweredBy = TGB.addText(152, 77, "Powered by Red", aqua)
-header.setScale(4)
+end
+end
+end
+glass.clear()
+os.sleep(.125)
+local header = glass.addText(9, 15, "--:--", tColors["aqua"])
 header.setZIndex(1)
-subheader.setScale(1.35)
-subheader.setZIndex(1)
-version.setScale(0.95)
-version.setZIndex(1)
-poweredBy.setScale(0.55)
-poweredBy.setZIndex(1)
-os.sleep(3)
-shell.run("red/glass/usrs")
-]])
-startupFile : close()
---Login
-loginFile = io.open("red/glass/login", "w")
-loginFile : write([[
-local TGB
-for _,side in pairs(redstone.getSides()) do
-  if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
-        TGB = peripheral.wrap(side)
-		break
-  end
-end
-if TGB==nil then
-  print("Can't find Glasses Bridge!")
-end
-os.sleep(.001)
-TGB.clear()
-login = false
-local border = TGB.addBox(5,3,200,2,gray,1)
-local border = TGB.addBox(5,83,200,2,gray,1)
-local border = TGB.addBox(3,3,2,82,gray,1)
-local border = TGB.addBox(203,3,2,82,gray,1)
-local object1 = TGB.addBox(5, 5, 198, 78, lightGray, 0.85)
-local header = TGB.addText(9, 9, "Login", aqua)
-local name = TGB.addText(9, 30, "", black)
-local password = TGB.addText(9, 38, "Password - $$password", black)
-local ret = TGB.addText(9, 65, "$$back for return", black)
-name.setZIndex(1)
-ret.setZIndex(1)
-password.setZIndex(1)
-header.setZIndex(1)
-header.setScale(2)
-while not login do
-local e, msg, name = os.pullEvent()
-if e == "chat_command" then
-	if msg == "back" then
-		shell.run("red/glass/usrs")
-	else
-		if fs.exists("red/glass/usr/"..name) then
-			lpass = msg
-			file = io.open("red/glass/usr/"..name)
-			cpass = file : read()
-			file : close()
-			if cpass == lpass then
-				login = true
-				shell.run("red/glass/loggedin")
-			else
-				local message = TGB.addText(9, 48, "Wrong password!", red)
-				os.sleep(1)
-				shell.run("red/glass/login")
-			end
-		else
-			local message = TGB.addText(9, 48, "User not found, please register", red)
-			os.sleep(1)
-			shell.run("red/glass/login")
-		end
-	end
-end
-end
-]])
-loginFile : close()
---loggedin
-loggedinFile = io.open("red/glass/loggedin", "w")
-loggedinFile : write([[
-local TGB
-for _,side in pairs(redstone.getSides()) do
-  if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
-        TGB = peripheral.wrap(side)
-		break
-  end
-end
-if TGB==nil then
-  print("Can't find Glasses Bridge!")
-end
-if not http then
-clr = red
-else
-	local uVerF = http.get("http://minecraft.naplno.sk/tekkit/red/glass/getVersion")
-		local uVer = uVerF.readAll()
-		local file = fs.open("red/glass/usr/ver", "r")
-		cVer = file.readAll()
-		file.close()
-		if uVer == cVer then
-		clr = 0x000000
-		else
-		clr = 0xFF5555
-		end
-end
-TGB.clear()
-i = nill
-file = io.open("red/glass/usr/min", "r")
-maximalize = file : read()
-file : close()
-if maximalize == "true" then
-local border = TGB.addBox(5,3,200,2,gray,1)
-local border = TGB.addBox(5,183,200,2,gray,1)
-local border = TGB.addBox(3,3,2,182,gray,1)
-local border = TGB.addBox(203,3,2,182,gray,1)
-local object1 = TGB.addBox(5, 5, 198, 178, lightGray, 0.85)
-local header = TGB.addText((98-9)/3, 9, "Main menu", aqua)
-local cmd1 = TGB.addText(9, 42, "Time - $$time", black)
-local cmd2 = TGB.addText(9, 52, "Calculator - Example: $$=15*8-9", black)
-local cmd3 = TGB.addText(9, 62, "Update - $$update", clr)
-local cmd4 = TGB.addText(9, 72, "Logout - $$logout", black)
-local cmd7 = TGB.addText(9, 82, "Shutdown - $$exit", black)
-local cmd5 = TGB.addText(9, 170, "Minimalize - $$min", aqua)
-header.setZIndex(1)
-header.setScale(3)
-cmd1.setZIndex(1)
-cmd2.setZIndex(1)
-cmd4.setZIndex(1)
-cmd3.setZIndex(1)
-cmd5.setZIndex(1)
-cmd7.setZIndex(1)
-else
-local borderUp = TGB.addBox(5,3,100,2,gray,1)
-local borderDown = TGB.addBox(3,20,102,2,gray,1)
-local border = TGB.addBox(3,3,2,17,gray,1)
-local borderRight = TGB.addBox(105,3,2,19,gray,1)
-local object1 = TGB.addBox(5, 5, 100, 15, lightGray, 0.85)
-local cmd6 = TGB.addText(8, 8, "Maximalize - $$max", aqua)
-cmd6.setZIndex(1)
-end
-loggedin = false
-while not loggedin do
-local g, msg = os.pullEvent()
-if g == "chat_command" then
-if msg == "max" then
-file = io.open("red/glass/usr/min", "w")
-file : write("true")
-file : close()
-shell.run("red/glass/loggedin")
-elseif msg == "min" then
-file = io.open("red/glass/usr/min", "w")
-file : write("false")
-file : close()
-shell.run("red/glass/loggedin")
-elseif msg == "logout" then
-loggedin = true
-shell.run("red/glass/usrs")
-elseif msg == "time" then
-loggedin = true
-shell.run("red/glass/time")
-elseif (msg:sub(1,1) == "=") then
- local banned = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x","y", "z"}
-local formula = msg:sub(2, -1):lower()
-for k,v in pairs(banned) do
-        formula = formula:gsub(v, "")
-end
-local func = loadstring("return " .. formula)
-local r, resp = pcall(func)
-if r and ((type(resp) == "number") or (type(resp) == "string")) then
-        local rslt = TGB.addText(9, 102, "=" .. resp, aqua)
-		rslt.setScale(1.20)
-		rslt.setZIndex(1)
-		os.sleep(1.95)
-		rslt.delete()
-else
-        local rslt = TGB.addText(9, 102,"Syntax Error", red)
-		rslt.setScale(1.20)
-		rslt.setZIndex(1)
-		os.sleep(1.95)
-		rslt.delete()
-end
-elseif msg == "exit" or msg == "shutdown" then
-loggedin = false
-TGB.clear()
-os.reboot()
-elseif msg == "update" then
-	local sCode = "http://minecraft.naplno.sk/tekkit/red/glass/update"
-	local sFile = updateFile
-	local sPath = shell.resolve("updateFile")
-	local response = http.get("http://minecraft.naplno.sk/tekkit/red/glass/update")
-		
-	if response then
-		
-		local sResponse = response.readAll()
-		response.close()
-		
-		local file = fs.open( sPath, "w")
-		file.write( sResponse )
-		file.close()		
-		os.sleep(1.25)
-		shell.run("updateFile")
-		
-	else
-		local errorText = TGB.addText(9, 102, "Error", red)
-		errorText.setZIndex(1)
-	end
-else
-if maximalize == "false" then
-local cmd8 = TGB.addText(8, 28, "Command not found!", red)
-cmd8.setZIndex(1)
-cmd8.delete()
-else
-local cmd8 = TGB.addText(8, 160, "Command not found!", red)
-cmd8.setZIndex(1)
-os.sleep(1.95)
-cmd8.delete()
-end
-end
-end
-end
-]])
-loggedinFile : close()
---Time
-timeFile = io.open("red/glass/time", "w")
-timeFile : write([[
-local TGB
-for _,side in pairs(redstone.getSides()) do
-  if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
-        TGB = peripheral.wrap(side)
-		break
-  end
-end
-if TGB==nil then
-  print("Can't find Glasses Bridge!")
-end
-TGB.clear()
+header.setScale(3.5)
+os.sleep(.125)
+local text = glass.addText(9, 46, "Calculating...", tColors["white"])
+text.setZIndex(1)
+text.setScale(1.125)
+os.sleep(.125)
+local timeCur = glass.addBox(x, 62, 5, 5, tColors["white"], 1)
+timeCur.setZIndex(2)
+os.sleep(.125)
+local timeDash = glass.addBox(9, 64, 96, 1, tColors["gray"], 1)
+timeDash.setZIndex(0.9)
+local p1 = glass.addBox(31, 64, 4, 1, tColors["aqua"], 1)
+local p2 = glass.addBox(79, 64, 4, 1, tColors["aqua"], 1)
+p1.setZIndex(1)
+p2.setZIndex(1)
+local sign = glass.addText(12, 2, "Powered by Red", tColors["gray"])
+sign.setScale(0.65)
+sign.setZIndex(1)
+local ver = glass.addText(68, 2, "V" .. version, tColors["gray"])
+ver.setScale(0.65)
+ver.setZIndex(1)
+local uText = glass.addText(110, 2, "", tColors["aqua"])
+uText.setZIndex(1)
+uText.setScale(0.65)
 function update()
-TGB.clear()
-cTime = textutils.formatTime(os.time(), false)
-local object1 = TGB.addBox(5, 5, 132, 42, lightGray, 0.65)
-local border = TGB.addBox(5,3,132,2,gray,1)
-local border = TGB.addBox(5,47,134,2,gray,1)
-local border = TGB.addBox(3,3,2,46,gray,1)
-local border = TGB.addBox(137,3,2,46,gray,1)
-local header = TGB.addText(9, 9, cTime, aqua)
-local cmd1 = TGB.addText(9, 36, "Back - $$back", black)
-header.setZIndex(1)
-cmd1.setZIndex(1)
-cmd1.setScale(1)
-header.setScale(3)
+local days=os.day()
+day={"Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"}
+_mon={"Janurary","February","March","April","May","June","July","August","September","October","November","December"}
+dNum=(days-math.floor(days/7)*7)+1
+dayName=day[dNum]
+local function isLeapYear(year)
+return year % 4 == 0 and (year % 100 > 0 or year % 400 == 0)
 end
-update()
-repeat
+local function daysInYear(year)
+if isLeapYear(year) then
+return 366
+end
+return 365
+end 
+local year=0
+local mon=1
+while days >= daysInYear(year) do
+days=days - daysInYear(year);
+year=year + 1;
+end
+local _temp={ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
+if isLeapYear(year) then
+_temp[2]=29
+end
+while days >= _temp[mon] do
+days=days - _temp[mon];
+mon=mon + 1;
+end
+mon=_mon[mon]
+return nYear,sMonth,nDay,sDay,nDayWeek,nMonth
+date=sDay..", "..sMonth.." "..nDay.." "..nYear
+local cTime = textutils.formatTime(os.time(), true)
+local a = tonumber(os.time())
+local x = a*4+7
+header.setText(cTime)
+text.setText(date)
+timeCur.setX(x)
+if http then
+y=y+1
+if y >= 0 and y < 8 then
+uText.setText("Connecting...")
+elseif y >= 8 and y <= 16 then
+uText.setText("No updade found")
+else
+uText.setText(" ")
+end
+end
+end
 time = false
+repeat
 while not time do
-  os.startTimer(0.20)
+  os.startTimer(.25)
   event, msg = os.pullEvent()
-  if event == "timer" then 
+  if event == "timer" then
     update()
-  elseif event == "chat_command" and msg == "back" or msg == "home" then
-    time = true
-    shell.run("red/glass/loggedin")
-    break
-  elseif event == "chat_command" and msg ~= "back" or msg ~= "home" then
-  TGB.clear()
-  local cmd1 = TGB.addText(9, 9, "Command not found!", red)
-    cmd1.setZIndex(1)
-    cmd1.setScale(1.25)
-	os.sleep(1.5)
-	update()
-	end
+  elseif msg == "back" or msg == "home" then
+  glass.clear()
+  i=1
+  time=true
+  elseif event ~= "chat_command" or event ~= "tColors["red"]stone" then
+  glass.clear()
+  i=1
+  time=true
+        end
 end
 until i ~= nill
-]])
-timeFile : close()
---startup(main)
-startupF = io.open("startup", "w")
-startupF : write([[
-print("Do you want to run Red Glass?")
-print('Type "yes" or "no"')
-ans = read()
-if ans == "yes" then
-shell.run("red/glass/startup")
-else
-error()
 end
-]])
-startupF : close()
---Register
-registerF = io.open("red/glass/register", "w")
-registerF : write([[
-local TGB
-for _,side in pairs(redstone.getSides()) do
-  if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
-        TGB = peripheral.wrap(side)
-		break
-  end
-end
-if TGB==nil then
-  print("Can't find Glasses Bridge!")
-end
-TGB.clear()
-local border = TGB.addBox(5,3,200,2,gray,1)
-local border = TGB.addBox(5,83,200,2,gray,1)
-local border = TGB.addBox(3,3,2,82,gray,1)
-local border = TGB.addBox(203,3,2,82,gray,1)
-local object1 = TGB.addBox(5, 5, 198, 78, lightGray, 0.85)
-local header = TGB.addText(9, 9, "Registration of your nickname", aqua)
-header.setZIndex(1)
-header.setScale(1.28)
-local cmd1 = TGB.addText(9, 30, "$$password or $$back", black)
-cmd1.setZIndex(1)
-while not reg do
-	local e, msg, nick = os.pullEvent()
-	if e == "chat_command" then
-		if fs.exists("red/glass/usr/"..nick) and msg ~= "back" then
-			local cmd2 = TGB.addText(9, 38, "User already exists!", red)
-			cmd2.setZIndex(1)
-			os.sleep(1.45)
-			shell.run("red/glass/register")
-		elseif msg == "back" then
-			shell.run("red/glass/usrs")
-		else
-			file = io.open("red/glass/usr/"..nick, "w")
-			file : write(msg)
-			file : close()
-			os.sleep(0.2)
-			local cmd2 = TGB.addText(9, 38, "Succesfully registered!", black)
-			cmd2.setZIndex(1)
-			os.sleep(1.45)
-			shell.run("red/glass/usrs")
-		end
-	end
-end
-]])
-registerF : close()
---usrs
-usrsF = io.open("red/glass/usrs", "w")
-usrsF : write([[
-local TGB
-for _,side in pairs(redstone.getSides()) do
-  if peripheral.getType(side)=="glassesbridge" or peripheral.getType(side)=="terminal_glasses_bridge" then
-        TGB = peripheral.wrap(side)
-		break
-  end
-end
-if TGB==nil then
-  print("Can't find Glasses Bridge!")
-end
-TGB.clear()
-local border = TGB.addBox(5,3,200,2,gray,1)
-local border = TGB.addBox(5,83,200,2,gray,1)
-local border = TGB.addBox(3,3,2,82,gray,1)
-local border = TGB.addBox(203,3,2,82,gray,1)
-local object1 = TGB.addBox(5, 5, 198, 78, lightGray, 0.85)
-local header = TGB.addText(9, 9, "Users", aqua)
-header.setZIndex(1)
-header.setScale(2)
-local cmd1 = TGB.addText(9, 30, "Login - $$login", black)
-local cmd2 = TGB.addText(9, 42, "Register - $$register", black)
-cmd1.setZIndex(1)
-cmd2.setZIndex(1)
-while not usrs do
-	local e, msg = os.pullEvent()
-	if e == "chat_command" then
-		if msg == "login" then
-			shell.run("red/glass/login")
-		elseif msg == "register" then
-			shell.run("red/glass/register")
-		else
-			local error = TGB.addText(9, 55, "Command not found!", red)
-			error.setZIndex(1)
-		end
-	end
-end
-]])
-usrsF : close()
-verFile = io.open("red/glass/usr/ver", "w")
-verFile : write("1.0.1")
-verFile : close()
-min = io.open("red/glass/usr/min", "w")
-min : write("true")
-min : close()
-shell.setAlias("red", "red/glass/startup")
-shell.setAlias("redglass", "red/glass/startup")
-os.sleep(2)
-sPath = shell.getRunningProgram()
-fs.delete(sPath)
-shell.run("red/glass/startup")
